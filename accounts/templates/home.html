@@ -1,0 +1,367 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MP4 → MP3 Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+  --black: #000000;       /* main background */
+  --dark-gray: #111111;   /* secondary background */
+  --gray: #1a1a1a;        /* cards, dropzones */
+  --lighter-gray: #2a2a2a;
+  --ink: #f5f5f5;         /* text */
+  --muted: #cccccc;
+  --accent: #e24e89;      /* buttons */
+  --accent-2: #ff86b3;
+  --white: #fff;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+  color: var(--ink);
+  background: var(--black);
+}
+
+/* Nav */
+.nav {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  color: var(--ink);
+}
+.brand { display: flex; gap: 10px; align-items: center; }
+.brand .logo {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--gray);
+  display: grid; place-items: center;
+  font-weight: 800; color: var(--accent);
+}
+.brand .name { font-weight: 800; letter-spacing: .5px; }
+.menu { display: flex; gap: 26px; align-items: center; }
+.menu a {
+  color: var(--ink); text-decoration: none; font-weight: 600; opacity: .9;
+}
+.menu a:hover { opacity: 1; text-decoration: underline; }
+.social a {
+  display: inline-grid; place-items: center;
+  width: 32px; height: 32px;
+  border-radius: 999px;
+  background: var(--lighter-gray);
+  text-decoration: none;
+  color: var(--ink); font-weight: 800;
+}
+
+/* Hero */
+.hero {
+  max-width: 1100px;
+  margin: 10px auto 40px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 20px;
+  align-items: center;
+  padding: 0 20px;
+}
+@media (max-width: 900px){ .hero { grid-template-columns: 1fr; } }
+.left h1 {
+  font-family: Pacifico, cursive;
+  font-size: 84px; line-height: .9; margin: 0;
+  color: var(--accent-2);
+}
+.left p { color: var(--muted); margin: 12px 0 24px; }
+.cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 18px rgba(0,0,0,.6);
+}
+.cta:disabled { opacity: .7; cursor: not-allowed; }
+.tiny { display: block; color: var(--muted); margin-top: 10px; font-size: 12px; }
+.hero-img {
+  position: relative;
+  min-height: 320px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,.8);
+  background: var(--gray);
+}
+.hero-img img { position: absolute; inset: 0; object-fit: cover; width: 100%; height: 100%; }
+
+/* Converter Card */
+.card { max-width: 1100px; margin: 0 auto 80px; padding: 0 20px; }
+.card-inner {
+  background: var(--gray);
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.8);
+  overflow: hidden;
+}
+.tabs {
+  display: flex; gap: 8px;
+  padding: 12px;
+  background: var(--dark-gray);
+}
+.tab {
+  flex: 1; padding: 14px;
+  border: none; border-radius: 12px;
+  font-weight: 700; cursor: default;
+  background: var(--lighter-gray); color: var(--ink);
+}
+.content { padding: 28px; }
+.dropzone {
+  border: 2px dashed var(--lighter-gray);
+  border-radius: 16px;
+  padding: 24px;
+  display: grid; gap: 14px; place-items: center;
+  text-align: center;
+  background: var(--dark-gray);
+  color: var(--ink);
+}
+.dropzone.drag { background: #222; }
+.progress {
+  height: 10px;
+  background: var(--lighter-gray);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+.progress>span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.actions {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 12px;
+}
+.ghost {
+  background: var(--lighter-gray);
+  border: none; border-radius: 10px;
+  padding: 10px 12px; font-weight: 700;
+  color: var(--ink);
+}
+.primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border: none; border-radius: 10px;
+  padding: 10px 14px; font-weight: 800;
+  color: var(--white);
+}
+.hidden { display: none; }
+
+footer {
+  max-width: 1100px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+  color: var(--muted);
+  opacity: .9;
+}
+code.badge {
+  background: var(--lighter-gray);
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--ink);
+}
+
+    </style>
+  </head>
+  <body>
+    <!-- Top Nav -->
+    <header class="nav">
+      <div class="brand">
+        <div class="logo">🎵</div>
+        <div class="name">Shop Convert</div>
+      </div>
+      <nav class="menu">
+        <a href="#about">About</a>
+        <a href="#convert">Converter</a>
+        <a href="#tips">Things to consider</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#contact">Contact</a>
+        <span class="social">
+          <a href="#" aria-label="facebook">f</a>
+          <a href="#" aria-label="twitter">t</a>
+          <a href="#" aria-label="instagram">★</a>
+        </span>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="left">
+        <h1>convert!</h1>
+        <p>
+          I'm fast, friendly, and runs in your browser. Turn <strong>MP4</strong> (and many other videos) into crystal clear <strong>MP3</strong> without uploading your files anywhere.
+        </p>
+        <button class="cta" id="chooseBtn">Choose a file ↗</button>
+        <small class="tiny">Powered by <code class="badge">ffmpeg.wasm</code>. Your media never leaves your device.</small>
+      </div>
+      <div class="hero-img" aria-hidden="true">
+        <!-- Replace the src below with your own image if you like -->
+        {% comment %} <img src="https://images.unsplash.com/photo-1544207240-3a8d2a13b236?q=80&w=1400&auto=format&fit=crop" alt="Playful hero image" /> {% endcomment %}
+        <img src="{% static 'accounts/images/pexels-garrettmorrow-1649771.jpg' %}" alt="Hero image" />
+      </div>
+    </section>
+
+    <!-- Converter Card -->
+    <main id="convert" class="card">
+      <div class="card-inner">
+        <div class="tabs">
+          <button class="tab" title="Common input">MP4</button>
+          <button class="tab" title="Also supported">MOV/AVI/MKV</button>
+          <button class="tab" title="Output format">MP3</button>
+        </div>
+        <div class="content">
+          <div id="drop" class="dropzone">
+            <div>
+              <strong>Drop a video</strong> here or
+              <button class="ghost" id="browseBtn">Browse</button>
+            </div>
+            <div>
+              We extract audio and save as <strong>.mp3</strong>.
+            </div>
+            <input id="fileInput" class="hidden" type="file" accept="video/*" />
+            <div class="progress hidden" id="progress">
+              <span></span>
+            </div>
+            <div class="actions hidden" id="actions">
+              <button class="primary" id="downloadBtn">Download MP3</button>
+              <button class="ghost" id="againBtn">Convert another</button>
+            </div>
+            <div id="status" class="tiny" style="color:#374151"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="about">
+      <p>
+        <strong>Why this?</strong> Sometimes you just want the audio. This page converts locally in your browser for privacy and speed. Tip: keep your tab open during conversion.
+      </p>
+    </footer>
+
+    <!-- ffmpeg.wasm -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+    <script>
+      const { createFFmpeg, fetchFile } = FFmpeg
+      const ffmpeg = createFFmpeg({ log: true })
+      
+      const fileInput = document.getElementById('fileInput')
+      const browseBtn = document.getElementById('browseBtn')
+      const chooseBtn = document.getElementById('chooseBtn')
+      const dropzone = document.getElementById('drop')
+      const progressEl = document.getElementById('progress')
+      const bar = progressEl.querySelector('span')
+      const statusEl = document.getElementById('status')
+      const actionsEl = document.getElementById('actions')
+      const downloadBtn = document.getElementById('downloadBtn')
+      const againBtn = document.getElementById('againBtn')
+      
+      let outputBlob = null
+      
+      function show(el) {
+        el.classList.remove('hidden')
+      }
+      function hide(el) {
+        el.classList.add('hidden')
+      }
+      function setStatus(msg) {
+        statusEl.textContent = msg || ''
+      }
+      function setProgress(p) {
+        bar.style.width = Math.max(0, Math.min(100, p)) + '%'
+      }
+      
+      // UI wiring
+      browseBtn.addEventListener('click', () => fileInput.click())
+      chooseBtn.addEventListener('click', () => fileInput.click())
+      fileInput.addEventListener('change', (e) => handleFiles(e.target.files))
+      
+      // Drag & drop
+      ;['dragenter', 'dragover'].forEach((ev) =>
+        dropzone.addEventListener(ev, (e) => {
+          e.preventDefault()
+          dropzone.classList.add('drag')
+        })
+      )
+      ;['dragleave', 'drop'].forEach((ev) =>
+        dropzone.addEventListener(ev, (e) => {
+          e.preventDefault()
+          dropzone.classList.remove('drag')
+        })
+      )
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault()
+        if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
+      })
+      
+      againBtn.addEventListener('click', () => {
+        outputBlob = null
+        setStatus('')
+        setProgress(0)
+        hide(actionsEl)
+        hide(progressEl)
+        fileInput.value = ''
+      })
+      
+      downloadBtn.addEventListener('click', () => {
+        if (!outputBlob) return
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(outputBlob)
+        a.download = 'audio.mp3'
+        a.click()
+        URL.revokeObjectURL(a.href)
+      })
+      
+      async function ensureFFmpeg() {
+        if (!ffmpeg.isLoaded()) {
+          setStatus('Loading converter… (first time may take a moment)')
+          await ffmpeg.load()
+        }
+      }
+      
+      async function handleFiles(files) {
+        const file = files[0]
+        if (!file) return
+        hide(actionsEl)
+        show(progressEl)
+        setProgress(0)
+        setStatus(`Preparing: ${file.name}`)
+        try {
+          await ensureFFmpeg()
+          ffmpeg.setProgress(({ ratio }) => {
+            if (Number.isFinite(ratio)) setProgress(Math.round(ratio * 100))
+          })
+          const inputName = 'input.' + (file.name.split('.').pop() || 'mp4')
+          const outName = 'output.mp3'
+          ffmpeg.FS('writeFile', inputName, await fetchFile(file))
+          setStatus('Converting to MP3…')
+          await ffmpeg.run('-i', inputName, '-vn', '-acodec', 'libmp3lame', '-b:a', '192k', outName)
+          const data = ffmpeg.FS('readFile', outName)
+          outputBlob = new Blob([data.buffer], { type: 'audio/mpeg' })
+          show(actionsEl)
+          setStatus('Done! Click Download MP3.')
+          setProgress(100)
+        } catch (err) {
+          console.error(err)
+          setStatus('Conversion failed. Please try another file.')
+          hide(progressEl)
+        }
+      }
+    </script>
+  </body>
+</html>
