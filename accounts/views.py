@@ -52,5 +52,17 @@ def profile(request):
     return render(request, 'accounts/profile.html')
 
 def home(request):
-    """Home page view"""
+    """Home page view with login functionality"""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            messages.success(request, f'Welcome back, {username}!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    
     return render(request, 'home.html')
