@@ -62,8 +62,16 @@ def user_logout(request):
 @login_required
 def profile(request):
     """User profile view (requires login)"""
-    user_profile = get_user_profile(request.user)
-    user_posts = get_user_posts(request.user)
+    try:
+        user_profile = get_user_profile(request.user)
+        user_posts = get_user_posts(request.user)
+    except Exception as e:
+        # If MongoDB is not available, show empty data
+        user_profile = None
+        user_posts = []
+        messages.warning(request, 'Profile data is temporarily unavailable. Please try again later.')
+        logger.error(f"Error fetching profile data: {e}")
+    
     return render(request, 'accounts/profile.html', {
         'user_profile': user_profile,
         'user_posts': user_posts
@@ -72,7 +80,12 @@ def profile(request):
 @login_required
 def edit_profile(request):
     """Edit user profile view"""
-    user_profile = get_user_profile(request.user)
+    try:
+        user_profile = get_user_profile(request.user)
+    except Exception as e:
+        user_profile = None
+        messages.warning(request, 'Profile data is temporarily unavailable. Please try again later.')
+        logger.error(f"Error fetching profile data: {e}")
     
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
@@ -80,9 +93,13 @@ def edit_profile(request):
         interests = [interest.strip() for interest in interests if interest.strip()]
         
         # Update profile in MongoDB
-        update_user_profile(request.user, bio, interests)
-        messages.success(request, 'Profile updated successfully!')
-        return redirect('accounts:profile')
+        try:
+            update_user_profile(request.user, bio, interests)
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('accounts:profile')
+        except Exception as e:
+            messages.error(request, 'Failed to update profile. Please try again later.')
+            logger.error(f"Error updating profile: {e}")
     
     return render(request, 'accounts/edit_profile.html', {
         'user_profile': user_profile

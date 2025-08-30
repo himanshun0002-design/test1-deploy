@@ -57,13 +57,20 @@ def create_user_profile(user, bio="", interests=None, profile_picture_url=""):
 def get_user_profile(user):
     """Get user profile from MongoDB"""
     try:
+        if not _check_mongodb_connection():
+            return None
         return UserProfile.objects.get(user_id=str(user.id))
     except UserProfile.DoesNotExist:
+        return None
+    except Exception as e:
+        logger.error(f"Error fetching user profile from MongoDB: {e}")
         return None
 
 def update_user_profile(user, bio, interests):
     """Update user profile in MongoDB"""
     try:
+        if not _check_mongodb_connection():
+            return None
         profile = UserProfile.objects.get(user_id=str(user.id))
         profile.bio = bio
         profile.interests = interests
@@ -72,22 +79,31 @@ def update_user_profile(user, bio, interests):
     except UserProfile.DoesNotExist:
         # Create profile if it doesn't exist
         return create_user_profile(user, bio, interests)
+    except Exception as e:
+        logger.error(f"Error updating user profile in MongoDB: {e}")
+        return None
 
 def create_post(user, title, content, tags=None):
     """Create a new post in MongoDB"""
     if tags is None:
         tags = []
 
-    post = Post(
-        title=title,
-        content=content,
-        author_id=str(user.id),
-        tags=tags,
-        likes_count=0,
-        liked_by=[]
-    )
-    post.save()
-    return post
+    try:
+        if not _check_mongodb_connection():
+            return None
+        post = Post(
+            title=title,
+            content=content,
+            author_id=str(user.id),
+            tags=tags,
+            likes_count=0,
+            liked_by=[]
+        )
+        post.save()
+        return post
+    except Exception as e:
+        logger.error(f"Error creating post in MongoDB: {e}")
+        return None
 
 def get_all_posts():
     """Get all posts from MongoDB, ordered by creation date"""
@@ -125,6 +141,8 @@ def get_post_by_id(post_id):
 def update_post(post_id, title, content, tags):
     """Update an existing post"""
     try:
+        if not _check_mongodb_connection():
+            return None
         post = Post.objects.get(id=post_id)
         post.title = title
         post.content = content
@@ -133,33 +151,55 @@ def update_post(post_id, title, content, tags):
         return post
     except Post.DoesNotExist:
         return None
+    except Exception as e:
+        logger.error(f"Error updating post in MongoDB: {e}")
+        return None
 
 def delete_post(post_id):
     """Delete a post"""
     try:
+        if not _check_mongodb_connection():
+            return False
         post = Post.objects.get(id=post_id)
         post.delete()
         return True
     except Post.DoesNotExist:
         return False
+    except Exception as e:
+        logger.error(f"Error deleting post from MongoDB: {e}")
+        return False
 
 def create_comment(user, post_id, content):
     """Create a comment on a post"""
-    comment = Comment(
-        post_id=post_id,
-        author_id=str(user.id),
-        content=content
-    )
-    comment.save()
-    return comment
+    try:
+        if not _check_mongodb_connection():
+            return None
+        comment = Comment(
+            post_id=post_id,
+            author_id=str(user.id),
+            content=content
+        )
+        comment.save()
+        return comment
+    except Exception as e:
+        logger.error(f"Error creating comment in MongoDB: {e}")
+        return None
 
 def get_post_comments(post_id):
     """Get all comments for a specific post"""
-    return Comment.objects.filter(post_id=post_id).order_by('created_at')
+    try:
+        if not _check_mongodb_connection():
+            return []
+        return Comment.objects.filter(post_id=post_id).order_by('created_at')
+    except Exception as e:
+        logger.error(f"Error fetching comments from MongoDB: {e}")
+        return []
 
 def like_post(user, post_id):
     """Like a post"""
     try:
+        if not _check_mongodb_connection():
+            return False
         post = Post.objects.get(id=post_id)
         user_id = str(user.id)
 
@@ -170,10 +210,15 @@ def like_post(user, post_id):
         return True
     except Post.DoesNotExist:
         return False
+    except Exception as e:
+        logger.error(f"Error liking post in MongoDB: {e}")
+        return False
 
 def unlike_post(user, post_id):
     """Unlike a post"""
     try:
+        if not _check_mongodb_connection():
+            return False
         post = Post.objects.get(id=post_id)
         user_id = str(user.id)
 
@@ -184,22 +229,36 @@ def unlike_post(user, post_id):
         return True
     except Post.DoesNotExist:
         return False
+    except Exception as e:
+        logger.error(f"Error unliking post in MongoDB: {e}")
+        return False
 
 def is_post_liked_by_user(user, post_id):
     """Check if a post is liked by a specific user"""
     try:
+        if not _check_mongodb_connection():
+            return False
         post = Post.objects.get(id=post_id)
         return str(user.id) in post.liked_by
     except Post.DoesNotExist:
         return False
+    except Exception as e:
+        logger.error(f"Error checking if post is liked in MongoDB: {e}")
+        return False
 
 def search_posts(query):
     """Search posts by title, content, or tags"""
-    return Post.objects.filter(
-        Q(title__icontains=query) |
-        Q(content__icontains=query) |
-        Q(tags__icontains=query)
-    ).order_by('-created_at')
+    try:
+        if not _check_mongodb_connection():
+            return []
+        return Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__icontains=query)
+        ).order_by('-created_at')
+    except Exception as e:
+        logger.error(f"Error searching posts in MongoDB: {e}")
+        return []
 
 def get_user_by_id(user_id):
     """Get Django user by ID"""

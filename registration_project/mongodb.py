@@ -15,7 +15,7 @@ def connect_to_mongodb():
         # Parse the MongoDB URI to extract components
         uri = settings.MONGODB_URI
         
-        # Optimized connection with faster timeouts
+        # Optimized connection with faster timeouts and SSL handling
         connect(
             db='registration_project',
             host=uri,
@@ -28,6 +28,10 @@ def connect_to_mongodb():
             maxIdleTimeMS=30000,             # Close idle connections faster
             retryWrites=True,
             w='majority',
+            ssl=True,
+            ssl_cert_reqs='CERT_NONE',      # Don't require SSL certificate verification
+            tlsAllowInvalidCertificates=True,  # Allow invalid certificates
+            tlsAllowInvalidHostnames=True,     # Allow invalid hostnames
         )
         print("✅ Successfully connected to MongoDB")
                 
