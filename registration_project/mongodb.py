@@ -15,46 +15,24 @@ def connect_to_mongodb():
         # Parse the MongoDB URI to extract components
         uri = settings.MONGODB_URI
         
-        # Try different connection approaches
-        try:
-            # First attempt: Use the full URI with minimal options
-            connect(
-                db='registration_project',
-                host=uri,
-                alias='default',
-                serverSelectionTimeoutMS=30000,
-                connectTimeoutMS=30000,
-                socketTimeoutMS=30000,
-            )
-            print("✅ Successfully connected to MongoDB (method 1)")
-        except Exception as e1:
-            print(f"Method 1 failed: {e1}")
-            try:
-                # Second attempt: Use connection string with explicit SSL settings
-                connect(
-                    db='registration_project',
-                    host=uri + "&ssl=true&ssl_cert_reqs=CERT_NONE",
-                    alias='default',
-                    serverSelectionTimeoutMS=30000,
-                    connectTimeoutMS=30000,
-                    socketTimeoutMS=30000,
-                )
-                print("✅ Successfully connected to MongoDB (method 2)")
-            except Exception as e2:
-                print(f"Method 2 failed: {e2}")
-                # Third attempt: Use connection string with TLS settings
-                connect(
-                    db='registration_project',
-                    host=uri + "&tls=true&tlsAllowInvalidCertificates=true",
-                    alias='default',
-                    serverSelectionTimeoutMS=30000,
-                    connectTimeoutMS=30000,
-                    socketTimeoutMS=30000,
-                )
-                print("✅ Successfully connected to MongoDB (method 3)")
+        # Optimized connection with faster timeouts
+        connect(
+            db='registration_project',
+            host=uri,
+            alias='default',
+            serverSelectionTimeoutMS=10000,  # Reduced from 30s to 10s
+            connectTimeoutMS=10000,          # Reduced from 30s to 10s
+            socketTimeoutMS=10000,           # Reduced from 30s to 10s
+            maxPoolSize=5,                   # Reduced pool size
+            minPoolSize=1,
+            maxIdleTimeMS=30000,             # Close idle connections faster
+            retryWrites=True,
+            w='majority',
+        )
+        print("✅ Successfully connected to MongoDB")
                 
     except Exception as e:
-        print(f"❌ All connection methods failed: {e}")
+        print(f"❌ MongoDB connection failed: {e}")
         # Don't raise the exception to prevent deployment failure
 
 

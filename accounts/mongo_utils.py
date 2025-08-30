@@ -10,19 +10,35 @@ import logging
 logger = logging.getLogger(__name__)
 
 def _check_mongodb_connection():
-    """Check if MongoDB connection is available"""
+    """Check if MongoDB connection is available with caching"""
+    import time
+    
+    current_time = time.time()
+    
+    # Use cached result if it's less than 30 seconds old
+    if (_mongodb_connection_cache['status'] is not None and 
+        current_time - _mongodb_connection_cache['last_check'] < 30):
+        return _mongodb_connection_cache['status']
+    
     try:
         db = get_db()
-        # Try a simple operation to test connection
-        db.command('ping')
+        # Try a simple operation to test connection with timeout
+        db.command('ping', maxTimeMS=5000)  # 5 second timeout
+        _mongodb_connection_cache['status'] = True
+        _mongodb_connection_cache['last_check'] = current_time
         return True
     except Exception as e:
         logger.warning(f"MongoDB connection not available: {e}")
+        _mongodb_connection_cache['status'] = False
+        _mongodb_connection_cache['last_check'] = current_time
         return False
 
 # Fallback data for when MongoDB is not available
 _fallback_posts = []
 _fallback_profiles = {}
+
+# Cache for MongoDB connection status
+_mongodb_connection_cache = {'status': None, 'last_check': 0}
 
 def create_user_profile(user, bio="", interests=None, profile_picture_url=""):
     """Create a user profile in MongoDB"""

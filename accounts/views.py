@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+import logging
+
+logger = logging.getLogger(__name__)
 from .mongo_utils import (
     create_user_profile, get_user_profile, create_post, get_all_posts, 
     get_user_posts, create_comment, get_post_comments, like_post, 
@@ -112,6 +115,7 @@ def home(request):
         # If MongoDB is not available, show empty posts list
         posts = []
         messages.warning(request, 'Posts are temporarily unavailable. Please try again later.')
+        logger.error(f"Error fetching posts: {e}")
     
     return render(request, 'home.html', {
         'posts': posts,
