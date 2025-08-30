@@ -1,0 +1,684 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Audio Converter Pro - Convert MP4 to MP3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}" />
+    <style>
+      /* Custom styles for the converter page */
+      :root {
+        --black: #000000;
+        --dark-gray: #111111;
+        --gray: #1a1a1a;
+        --lighter-gray: #2a2a2a;
+        --ink: #f5f5f5;
+        --muted: #cccccc;
+        --accent: #e24e89;
+        --accent-2: #ff86b3;
+        --white: #fff;
+      }
+      
+      body {
+        background: var(--black);
+        color: var(--ink);
+      }
+      
+      .header {
+        background: var(--dark-gray);
+        border-bottom: 1px solid var(--lighter-gray);
+      }
+      
+      .nav-brand {
+        color: var(--accent-2);
+      }
+      
+      .nav-menu a {
+        color: var(--muted);
+      }
+      
+      .nav-menu a:hover {
+        color: var(--accent-2);
+        background: var(--lighter-gray);
+      }
+      
+      .nav-menu a.active {
+        color: var(--accent-2);
+        background: var(--lighter-gray);
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: var(--white);
+      }
+      
+      .btn-primary:hover {
+        background: linear-gradient(135deg, var(--accent-2), var(--accent));
+        color: var(--white);
+      }
+      
+      .btn-secondary {
+        background: var(--lighter-gray);
+        color: var(--ink);
+        border: 1px solid var(--gray);
+      }
+      
+      .btn-secondary:hover {
+        background: var(--gray);
+        color: var(--white);
+      }
+      
+      .card {
+        background: var(--gray);
+        border: 1px solid var(--lighter-gray);
+        color: var(--ink);
+      }
+      
+      .form-input {
+        background: var(--dark-gray);
+        border: 2px solid var(--lighter-gray);
+        color: var(--ink);
+      }
+      
+      .form-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(226, 78, 137, 0.1);
+      }
+      
+      .form-input::placeholder {
+        color: var(--muted);
+      }
+      
+      .footer {
+        background: var(--dark-gray);
+        color: var(--muted);
+        border-top: 1px solid var(--lighter-gray);
+      }
+      
+      /* Hero section styles */
+      .hero {
+        max-width: 1100px;
+        margin: 10px auto 40px;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 20px;
+        align-items: center;
+        padding: 0 20px;
+      }
+      
+      @media (max-width: 900px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      .left h1 {
+        font-family: Pacifico, cursive;
+        font-size: 84px;
+        line-height: 0.9;
+        margin: 0;
+        color: var(--accent-2);
+      }
+      
+      .left p {
+        color: var(--muted);
+        margin: 12px 0 24px;
+      }
+      
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--accent);
+        color: var(--white);
+        border: none;
+        border-radius: 999px;
+        padding: 14px 20px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.6);
+      }
+      
+      .cta:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      .tiny {
+        display: block;
+        color: var(--muted);
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      
+      .hero-img {
+        position: relative;
+        min-height: 320px;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+        background: var(--gray);
+      }
+      
+      .hero-img img {
+        position: absolute;
+        inset: 0;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+      
+      /* Converter Card */
+      .card {
+        max-width: 1100px;
+        margin: 0 auto 80px;
+        padding: 0 20px;
+      }
+      
+      .card-inner {
+        background: var(--gray);
+        border-radius: 24px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+      }
+      
+      .tabs {
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        background: var(--dark-gray);
+      }
+      
+      .tab {
+        flex: 1;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: default;
+        background: var(--lighter-gray);
+        color: var(--ink);
+      }
+      
+      .content {
+        padding: 28px;
+      }
+      
+      .dropzone {
+        border: 2px dashed var(--lighter-gray);
+        border-radius: 16px;
+        padding: 24px;
+        display: grid;
+        gap: 14px;
+        place-items: center;
+        text-align: center;
+        background: var(--dark-gray);
+        color: var(--ink);
+      }
+      
+      .dropzone.drag {
+        background: #222;
+      }
+      
+      .progress {
+        height: 10px;
+        background: var(--lighter-gray);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 14px;
+      }
+      
+      .progress > span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      }
+      
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 12px;
+      }
+      
+      .ghost {
+        background: var(--lighter-gray);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      
+      .primary {
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 800;
+        color: var(--white);
+      }
+      
+      .hidden {
+        display: none;
+      }
+      
+      /* User welcome section */
+      .user-welcome {
+        background: var(--gray);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid var(--lighter-gray);
+      }
+      
+      .user-welcome h2 {
+        color: var(--accent-2);
+        margin-bottom: 8px;
+      }
+      
+      .user-welcome p {
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+      
+      /* Mobile adjustments */
+      @media (max-width: 768px) {
+        .left h1 {
+          font-size: 48px;
+        }
+        
+        .hero {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        
+        .cta {
+          width: 100%;
+          justify-content: center;
+          padding: 12px;
+        }
+        
+        .hero-img {
+          min-height: 220px;
+          border-radius: 16px;
+        }
+        
+        .card-inner {
+          border-radius: 16px;
+        }
+        
+        .tabs {
+          flex-direction: column;
+        }
+        
+        .tab {
+          width: 100%;
+          text-align: center;
+        }
+        
+        .content {
+          padding: 18px;
+        }
+        
+        .dropzone {
+          padding: 18px;
+        }
+        
+        .actions {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <div class="nav-brand">
+            <div class="logo">🎵</div>
+            <span>Audio Converter Pro</span>
+          </div>
+          <ul class="nav-menu">
+            <li><a href="{% url 'accounts:home' %}" class="active">Home</a></li>
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'converter:dashboard' %}">Converter</a></li>
+              <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+              <li><a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a></li>
+            {% else %}
+              <li><a href="{% url 'accounts:login' %}">Sign In</a></li>
+              <li><a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">Sign Up</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- User Welcome Section (if logged in) -->
+    {% if user.is_authenticated %}
+      <div class="container">
+        <div class="user-welcome">
+          <h2>Welcome back, {{ user.username }}! 👋</h2>
+          <p>Ready to convert your next video to audio? Your files are processed securely in your browser.</p>
+          <div class="flex gap-4" style="flex-wrap: wrap;">
+            <a href="{% url 'accounts:profile' %}" class="btn btn-secondary btn-sm">View Profile</a>
+            <span class="text-sm" style="color: var(--muted);">Last login: {{ user.last_login|date:'M j, Y g:i A'|default:'First time' }}</span>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="left">
+        <h1>convert!</h1>
+        <p>
+          I'm fast, friendly, and runs in your browser. Turn <strong>MP4</strong> (and many other videos) into crystal clear <strong>MP3</strong> without uploading your files anywhere.
+        </p>
+        <button class="cta" id="chooseBtn">Choose a file ↗</button>
+        <small class="tiny">Powered by <code class="badge">ffmpeg.wasm</code>. Your media never leaves your device.</small>
+      </div>
+      <div class="hero-img" aria-hidden="true">
+        <img src="{% static 'accounts/images/pexels-garrettmorrow-1649771.jpg' %}" alt="Hero image" />
+      </div>
+    </section>
+
+    <!-- Converter Card -->
+    <main id="convert" class="card">
+      <div class="card-inner">
+        <div class="tabs">
+          <button class="tab" title="Common input">MP4</button>
+          <button class="tab" title="Also supported">MOV/AVI/MKV</button>
+          <button class="tab" title="Output format">MP3</button>
+        </div>
+        <div class="content">
+          <div id="drop" class="dropzone">
+            <div>
+              <strong>Drop a video</strong> here or
+              <button class="ghost" id="browseBtn">Browse</button>
+            </div>
+            <div>
+              We extract audio and save as <strong>.mp3</strong>.
+            </div>
+            <input id="fileInput" class="hidden" type="file" accept="video/*" />
+            <div class="progress hidden" id="progress">
+              <span></span>
+            </div>
+            <div class="actions hidden" id="actions">
+              <button class="primary" id="downloadBtn">Download MP3</button>
+              <button class="ghost" id="againBtn">Convert another</button>
+            </div>
+            <div id="status" class="tiny" style="color:#374151"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Server-side Conversion Section -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Advanced Video Converter</h2>
+        <p class="card-subtitle">Upload and convert videos to MP3 with server-side processing</p>
+      </div>
+      <div class="content">
+        <div id="serverDrop" class="dropzone">
+          <div>
+            <strong>Drop a video file</strong> here or
+            <button class="ghost" id="serverBrowseBtn">Browse Files</button>
+          </div>
+          <div>
+            Supported formats: <strong>MP4, AVI, MOV, MKV, WMV, FLV, WebM</strong>
+          </div>
+          <input id="serverFileInput" class="hidden" type="file" accept="video/*" />
+          <div class="progress hidden" id="serverProgress">
+            <span></span>
+          </div>
+                      <div class="actions hidden" id="serverActions">
+              <button class="primary" id="serverDownloadBtn">Download MP3</button>
+              <button class="secondary" id="serverSrtBtn">Download SRT</button>
+              <button class="ghost" id="serverAgainBtn">Convert Another</button>
+            </div>
+          <div id="serverStatus" class="tiny" style="color:#374151"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p>
+          <strong>Why this?</strong> Sometimes you just want the audio. This page converts locally in your browser for privacy and speed. Tip: keep your tab open during conversion.
+        </p>
+        <p style="margin-top: 16px; font-size: 12px;">
+          &copy; 2024 Audio Converter Pro. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- ffmpeg.wasm -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+    <script>
+      const { createFFmpeg, fetchFile } = FFmpeg
+      const ffmpeg = createFFmpeg({ log: true })
+      
+      const fileInput = document.getElementById('fileInput')
+      const browseBtn = document.getElementById('browseBtn')
+      const chooseBtn = document.getElementById('chooseBtn')
+      const dropzone = document.getElementById('drop')
+      const progressEl = document.getElementById('progress')
+      const bar = progressEl.querySelector('span')
+      const statusEl = document.getElementById('status')
+      const actionsEl = document.getElementById('actions')
+      const downloadBtn = document.getElementById('downloadBtn')
+      const againBtn = document.getElementById('againBtn')
+      
+      let outputBlob = null
+      
+      function show(el) {
+        el.classList.remove('hidden')
+      }
+      function hide(el) {
+        el.classList.add('hidden')
+      }
+      function setStatus(msg) {
+        statusEl.textContent = msg || ''
+      }
+      function setProgress(p) {
+        bar.style.width = Math.max(0, Math.min(100, p)) + '%'
+      }
+      
+      // UI wiring
+      browseBtn.addEventListener('click', () => fileInput.click())
+      chooseBtn.addEventListener('click', () => fileInput.click())
+      fileInput.addEventListener('change', (e) => handleFiles(e.target.files))
+      
+      // Drag & drop
+      ;['dragenter', 'dragover'].forEach((ev) =>
+        dropzone.addEventListener(ev, (e) => {
+          e.preventDefault()
+          dropzone.classList.add('drag')
+        })
+      )
+      ;['dragleave', 'drop'].forEach((ev) =>
+        dropzone.addEventListener(ev, (e) => {
+          e.preventDefault()
+          dropzone.classList.remove('drag')
+        })
+      )
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault()
+        if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
+      })
+      
+      againBtn.addEventListener('click', () => {
+        outputBlob = null
+        setStatus('')
+        setProgress(0)
+        hide(actionsEl)
+        hide(progressEl)
+        fileInput.value = ''
+      })
+      
+      downloadBtn.addEventListener('click', () => {
+        if (!outputBlob) return
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(outputBlob)
+        a.download = 'audio.mp3'
+        a.click()
+        URL.revokeObjectURL(a.href)
+      })
+      
+      async function ensureFFmpeg() {
+        if (!ffmpeg.isLoaded()) {
+          setStatus('Loading converter… (first time may take a moment)')
+          await ffmpeg.load()
+        }
+      }
+      
+      async function handleFiles(files) {
+        const file = files[0]
+        if (!file) return
+        hide(actionsEl)
+        show(progressEl)
+        setProgress(0)
+        setStatus(`Preparing: ${file.name}`)
+        try {
+          await ensureFFmpeg()
+          ffmpeg.setProgress(({ ratio }) => {
+            if (Number.isFinite(ratio)) setProgress(Math.round(ratio * 100))
+          })
+          const inputName = 'input.' + (file.name.split('.').pop() || 'mp4')
+          const outName = 'output.mp3'
+          ffmpeg.FS('writeFile', inputName, await fetchFile(file))
+          setStatus('Converting to MP3…')
+          await ffmpeg.run('-i', inputName, '-vn', '-acodec', 'libmp3lame', '-b:a', '192k', outName)
+          const data = ffmpeg.FS('readFile', outName)
+          outputBlob = new Blob([data.buffer], { type: 'audio/mpeg' })
+          show(actionsEl)
+          setStatus('Done! Click Download MP3.')
+          setProgress(100)
+        } catch (err) {
+          console.error(err)
+          setStatus('Conversion failed. Please try another file.')
+          hide(progressEl)
+        }
+      }
+
+      // Server-side conversion functionality
+      const serverFileInput = document.getElementById('serverFileInput')
+      const serverBrowseBtn = document.getElementById('serverBrowseBtn')
+      const serverDropzone = document.getElementById('serverDrop')
+      const serverProgressEl = document.getElementById('serverProgress')
+      const serverBar = serverProgressEl.querySelector('span')
+      const serverStatusEl = document.getElementById('serverStatus')
+      const serverActionsEl = document.getElementById('serverActions')
+      const serverDownloadBtn = document.getElementById('serverDownloadBtn')
+      const serverAgainBtn = document.getElementById('serverAgainBtn')
+      
+      let currentConversionId = null
+      
+      function showServer(el) {
+        el.classList.remove('hidden')
+      }
+      function hideServer(el) {
+        el.classList.add('hidden')
+      }
+      function setServerStatus(msg) {
+        serverStatusEl.textContent = msg || ''
+      }
+      function setServerProgress(p) {
+        serverBar.style.width = Math.max(0, Math.min(100, p)) + '%'
+      }
+      
+      // Server-side UI wiring
+      serverBrowseBtn.addEventListener('click', () => serverFileInput.click())
+      serverFileInput.addEventListener('change', (e) => handleServerFiles(e.target.files))
+      
+      // Server-side drag & drop
+      ;['dragenter', 'dragover'].forEach((ev) =>
+        serverDropzone.addEventListener(ev, (e) => {
+          e.preventDefault()
+          serverDropzone.classList.add('drag')
+        })
+      )
+      ;['dragleave', 'drop'].forEach((ev) =>
+        serverDropzone.addEventListener(ev, (e) => {
+          e.preventDefault()
+          serverDropzone.classList.remove('drag')
+        })
+      )
+      serverDropzone.addEventListener('drop', (e) => {
+        e.preventDefault()
+        if (e.dataTransfer.files.length) handleServerFiles(e.dataTransfer.files)
+      })
+      
+      serverAgainBtn.addEventListener('click', () => {
+        currentConversionId = null
+        setServerStatus('')
+        setServerProgress(0)
+        hideServer(serverActionsEl)
+        hideServer(serverProgressEl)
+        serverFileInput.value = ''
+      })
+      
+      serverDownloadBtn.addEventListener('click', () => {
+        if (!currentConversionId) return
+        window.open(`/converter/download/${currentConversionId}/`, '_blank')
+      })
+      
+      serverSrtBtn.addEventListener('click', () => {
+        if (!currentConversionId) return
+        window.open(`/converter/srt/${currentConversionId}/`, '_blank')
+      })
+      
+      async function handleServerFiles(files) {
+        const file = files[0]
+        if (!file) return
+        
+        hideServer(serverActionsEl)
+        showServer(serverProgressEl)
+        setServerProgress(0)
+        setServerStatus(`Uploading: ${file.name}`)
+        
+        try {
+          const formData = new FormData()
+          formData.append('video_file', file)
+          
+          // Upload file
+          setServerProgress(25)
+          setServerStatus('Uploading file...')
+          
+          const uploadResponse = await fetch('/converter/upload/', {
+            method: 'POST',
+            body: formData
+          })
+          
+          const uploadResult = await uploadResponse.json()
+          
+          if (!uploadResult.success) {
+            throw new Error(uploadResult.error || 'Upload failed')
+          }
+          
+          currentConversionId = uploadResult.conversion_id
+          setServerProgress(100)
+          setServerStatus('Conversion completed! Click Download MP3.')
+          showServer(serverActionsEl)
+          
+        } catch (err) {
+          console.error(err)
+          setServerStatus(`Error: ${err.message}`)
+          hideServer(serverProgressEl)
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Audio Converter Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <div class="nav-brand">
+          <div class="logo">🎵</div>
+          <span>Audio Converter Pro</span>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="{% url 'accounts:home' %}">Home</a></li>
+          <li><a href="{% url 'accounts:profile' %}" class="active">Profile</a></li>
+          <li><a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <div class="container-md">
+      <!-- Profile Header -->
+      <div class="card">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            {{ request.user.username|first|upper }}
+          </div>
+          <h1>Welcome back, {{ request.user.username }}! 👋</h1>
+          <p class="card-subtitle">Manage your account and view your conversion history</p>
+        </div>
+
+        <!-- User Stats -->
+        <div class="profile-stats">
+          <div class="stat-card">
+            <span class="stat-number">0</span>
+            <span class="stat-label">Files Converted</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">0</span>
+            <span class="stat-label">Total Time Saved</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">0</span>
+            <span class="stat-label">Storage Used</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Information -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Account Information</h2>
+          <p class="card-subtitle">Your account details and preferences</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" value="{{ request.user.username }}" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" value="{{ request.user.email|default:'Not provided' }}" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Member Since</label>
+          <input type="text" class="form-input" value="{{ request.user.date_joined|date:'F j, Y' }}" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Last Login</label>
+          <input type="text" class="form-input" value="{{ request.user.last_login|date:'F j, Y g:i A'|default:'Never' }}" readonly>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Quick Actions</h2>
+          <p class="card-subtitle">Common tasks and shortcuts</p>
+        </div>
+
+        <div class="flex gap-4" style="flex-wrap: wrap;">
+          <a href="{% url 'accounts:home' %}" class="btn btn-primary">
+            🎵 Start Converting
+          </a>
+          <a href="#" class="btn btn-secondary">
+            📊 View History
+          </a>
+          <a href="#" class="btn btn-secondary">
+            ⚙️ Settings
+          </a>
+          <a href="#" class="btn btn-secondary">
+            💬 Support
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Activity</h2>
+          <p class="card-subtitle">Your latest conversions and actions</p>
+        </div>
+
+        <div class="text-center" style="padding: var(--space-8);">
+          <div style="font-size: 3rem; margin-bottom: var(--space-4);">📁</div>
+          <h3>No recent activity</h3>
+          <p class="text-gray-500">Start converting your first file to see your activity here.</p>
+          <a href="{% url 'accounts:home' %}" class="btn btn-primary mt-4">
+            Convert Your First File
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2024 Audio Converter Pro. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Add active state to current nav item
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentPath = window.location.pathname;
+      const navLinks = document.querySelectorAll('.nav-menu a');
+      
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

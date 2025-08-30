@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Video Converter Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">Video Converter Dashboard</h1>
+      <p class="card-subtitle">Convert your videos to MP3 format</p>
+    </div>
+    
+    <div class="content">
+      <!-- Upload Section -->
+      <div class="upload-section mb-6">
+        <h3>Upload Video</h3>
+        <div id="uploadDrop" class="dropzone">
+          <div>
+            <strong>Drop a video file</strong> here or
+            <button class="btn btn-secondary btn-sm" id="uploadBrowseBtn">Browse Files</button>
+          </div>
+          <div>
+            Supported formats: <strong>MP4, AVI, MOV, MKV, WMV, FLV, WebM</strong>
+          </div>
+          <input id="uploadFileInput" class="hidden" type="file" accept="video/*" />
+          <div class="progress hidden" id="uploadProgress">
+            <span></span>
+          </div>
+          <div id="uploadStatus" class="text-sm mt-2"></div>
+        </div>
+      </div>
+      
+      <!-- Conversion History -->
+      <div class="history-section">
+        <h3>Recent Conversions</h3>
+        {% if conversions %}
+          <div class="conversion-list">
+            {% for conversion in conversions %}
+              <div class="conversion-item border rounded p-4 mb-3">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h4 class="font-semibold">{{ conversion.original_filename }}</h4>
+                                         <p class="text-sm text-gray-600">
+                       {{ conversion.input_format|upper }} → {{ conversion.output_format|upper }}
+                       • {{ conversion.input_file_size_mb }}MB
+                       {% if conversion.output_file_size_mb %}
+                         → {{ conversion.output_file_size_mb }}MB
+                       {% endif %}
+                       {% if conversion.language %}
+                         • Language: {{ conversion.language }}
+                       {% endif %}
+                     </p>
+                    <p class="text-xs text-gray-500">
+                      {{ conversion.created_at|date:"M j, Y g:i A" }}
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <span class="status-badge status-{{ conversion.status }}">
+                      {{ conversion.status|title }}
+                    </span>
+                                         {% if conversion.status == 'completed' %}
+                       <div class="flex flex-col gap-2">
+                         <a href="{% url 'converter:download_audio' conversion.id|stringformat:'s' %}" 
+                            class="btn btn-primary btn-sm">
+                           Download MP3
+                         </a>
+                         {% if conversion.srt_file_id %}
+                           <a href="{% url 'converter:download_srt' conversion.id|stringformat:'s' %}" 
+                              class="btn btn-secondary btn-sm">
+                             Download SRT
+                           </a>
+                         {% endif %}
+                       </div>
+                     {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-gray-500">No conversions yet. Upload your first video!</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-processing {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-failed {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.conversion-item {
+  background: var(--gray-50);
+  border-color: var(--gray-200);
+}
+
+.conversion-item:hover {
+  background: var(--gray-100);
+}
+</style>
+
+<script>
+// Upload functionality
+const uploadFileInput = document.getElementById('uploadFileInput')
+const uploadBrowseBtn = document.getElementById('uploadBrowseBtn')
+const uploadDropzone = document.getElementById('uploadDrop')
+const uploadProgressEl = document.getElementById('uploadProgress')
+const uploadBar = uploadProgressEl.querySelector('span')
+const uploadStatusEl = document.getElementById('uploadStatus')
+
+function showUpload(el) {
+  el.classList.remove('hidden')
+}
+function hideUpload(el) {
+  el.classList.add('hidden')
+}
+function setUploadStatus(msg) {
+  uploadStatusEl.textContent = msg || ''
+}
+function setUploadProgress(p) {
+  uploadBar.style.width = Math.max(0, Math.min(100, p)) + '%'
+}
+
+// Upload UI wiring
+uploadBrowseBtn.addEventListener('click', () => uploadFileInput.click())
+uploadFileInput.addEventListener('change', (e) => handleUploadFiles(e.target.files))
+
+// Upload drag & drop
+;['dragenter', 'dragover'].forEach((ev) =>
+  uploadDropzone.addEventListener(ev, (e) => {
+    e.preventDefault()
+    uploadDropzone.classList.add('drag')
+  })
+)
+;['dragleave', 'drop'].forEach((ev) =>
+  uploadDropzone.addEventListener(ev, (e) => {
+    e.preventDefault()
+    uploadDropzone.classList.remove('drag')
+  })
+)
+uploadDropzone.addEventListener('drop', (e) => {
+  e.preventDefault()
+  if (e.dataTransfer.files.length) handleUploadFiles(e.dataTransfer.files)
+})
+
+async function handleUploadFiles(files) {
+  const file = files[0]
+  if (!file) return
+  
+  hideUpload(uploadProgressEl)
+  setUploadProgress(0)
+  setUploadStatus(`Uploading: ${file.name}`)
+  
+  try {
+    const formData = new FormData()
+    formData.append('video_file', file)
+    
+    // Upload file
+    setUploadProgress(25)
+    setUploadStatus('Uploading file...')
+    
+    const uploadResponse = await fetch('/converter/upload/', {
+      method: 'POST',
+      body: formData
+    })
+    
+    const uploadResult = await uploadResponse.json()
+    
+    if (!uploadResult.success) {
+      throw new Error(uploadResult.error || 'Upload failed')
+    }
+    
+    setUploadProgress(100)
+    setUploadStatus('Conversion completed! Check the list below for download.')
+    
+    // Reload page to show new conversion
+    setTimeout(() => {
+      window.location.reload()
+    }, 2000)
+    
+  } catch (err) {
+    console.error(err)
+    setUploadStatus(`Error: ${err.message}`)
+  }
+}
+</script>
+{% endblock %}
