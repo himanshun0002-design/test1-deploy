@@ -4,6 +4,25 @@ Utility functions for MongoDB operations
 from .mongo_models import UserProfile, Post, Comment
 from django.contrib.auth.models import User
 from mongoengine.queryset.visitor import Q
+from mongoengine.connection import get_db
+import logging
+
+logger = logging.getLogger(__name__)
+
+def _check_mongodb_connection():
+    """Check if MongoDB connection is available"""
+    try:
+        db = get_db()
+        # Try a simple operation to test connection
+        db.command('ping')
+        return True
+    except Exception as e:
+        logger.warning(f"MongoDB connection not available: {e}")
+        return False
+
+# Fallback data for when MongoDB is not available
+_fallback_posts = []
+_fallback_profiles = {}
 
 def create_user_profile(user, bio="", interests=None, profile_picture_url=""):
     """Create a user profile in MongoDB"""
@@ -56,17 +75,35 @@ def create_post(user, title, content, tags=None):
 
 def get_all_posts():
     """Get all posts from MongoDB, ordered by creation date"""
-    return Post.objects.order_by('-created_at')
+    try:
+        if not _check_mongodb_connection():
+            logger.error("MongoDB connection not available")
+            return []
+        return Post.objects.order_by('-created_at')
+    except Exception as e:
+        logger.error(f"Error fetching posts from MongoDB: {e}")
+        return []
 
 def get_user_posts(user):
     """Get all posts by a specific user"""
-    return Post.objects.filter(author_id=str(user.id)).order_by('-created_at')
+    try:
+        if not _check_mongodb_connection():
+            return []
+        return Post.objects.filter(author_id=str(user.id)).order_by('-created_at')
+    except Exception as e:
+        logger.error(f"Error fetching user posts from MongoDB: {e}")
+        return []
 
 def get_post_by_id(post_id):
     """Get a specific post by ID"""
     try:
+        if not _check_mongodb_connection():
+            return None
         return Post.objects.get(id=post_id)
     except Post.DoesNotExist:
+        return None
+    except Exception as e:
+        logger.error(f"Error fetching post by ID from MongoDB: {e}")
         return None
 
 def update_post(post_id, title, content, tags):

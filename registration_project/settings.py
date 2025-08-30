@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'registration_project.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # MongoDB Configuration
-MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://newinfluencer99_db_user:mzKmvdzqv0Mf0EgV@cluster0.mnjvgvb.mongodb.net/')
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://newinfluencer99_db_user:mzKmvdzqv0Mf0EgV@cluster0.mnjvgvb.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE')
 
 # MongoDB connection will be established when needed, not at import time
 

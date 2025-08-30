@@ -103,10 +103,15 @@ def home(request):
     search_query = request.GET.get('q', '')
     
     # Get all posts from MongoDB for display
-    if search_query:
-        posts = search_posts(search_query)
-    else:
-        posts = get_all_posts()
+    try:
+        if search_query:
+            posts = search_posts(search_query)
+        else:
+            posts = get_all_posts()
+    except Exception as e:
+        # If MongoDB is not available, show empty posts list
+        posts = []
+        messages.warning(request, 'Posts are temporarily unavailable. Please try again later.')
     
     return render(request, 'home.html', {
         'posts': posts,
@@ -227,3 +232,16 @@ def unlike_post_view(request, post_id):
         return JsonResponse({'status': 'success', 'action': 'unliked'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
+
+def health_check(request):
+    """Health check endpoint for debugging"""
+    from .mongo_utils import _check_mongodb_connection
+    from django.utils import timezone
+    
+    mongodb_status = _check_mongodb_connection()
+    
+    return JsonResponse({
+        'status': 'healthy',
+        'mongodb_connected': mongodb_status,
+        'timestamp': timezone.now().isoformat()
+    })

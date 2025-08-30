@@ -16,4 +16,5 @@ urlpatterns = [
     path('post/<str:post_id>/delete/', views.delete_post_view, name='delete_post'),
     path('post/<str:post_id>/like/', views.like_post_view, name='like_post'),
     path('post/<str:post_id>/unlike/', views.unlike_post_view, name='unlike_post'),
+    path('health/', views.health_check, name='health_check'),
 ]

@@ -12,18 +12,49 @@ def connect_to_mongodb():
         # Disconnect any existing connections (avoid duplicate connections)
         disconnect(alias='default')
 
-        # Add connection options for better reliability
-        connect(
-            db='registration_project',   # 👈 You can change this DB name if needed
-            host=settings.MONGODB_URI,
-            alias='default',
-            serverSelectionTimeoutMS=5000,  # 5 second timeout
-            connectTimeoutMS=10000,         # 10 second connection timeout
-            socketTimeoutMS=20000,          # 20 second socket timeout
-        )
-        print("✅ Successfully connected to MongoDB")
+        # Parse the MongoDB URI to extract components
+        uri = settings.MONGODB_URI
+        
+        # Try different connection approaches
+        try:
+            # First attempt: Use the full URI with minimal options
+            connect(
+                db='registration_project',
+                host=uri,
+                alias='default',
+                serverSelectionTimeoutMS=30000,
+                connectTimeoutMS=30000,
+                socketTimeoutMS=30000,
+            )
+            print("✅ Successfully connected to MongoDB (method 1)")
+        except Exception as e1:
+            print(f"Method 1 failed: {e1}")
+            try:
+                # Second attempt: Use connection string with explicit SSL settings
+                connect(
+                    db='registration_project',
+                    host=uri + "&ssl=true&ssl_cert_reqs=CERT_NONE",
+                    alias='default',
+                    serverSelectionTimeoutMS=30000,
+                    connectTimeoutMS=30000,
+                    socketTimeoutMS=30000,
+                )
+                print("✅ Successfully connected to MongoDB (method 2)")
+            except Exception as e2:
+                print(f"Method 2 failed: {e2}")
+                # Third attempt: Use connection string with TLS settings
+                connect(
+                    db='registration_project',
+                    host=uri + "&tls=true&tlsAllowInvalidCertificates=true",
+                    alias='default',
+                    serverSelectionTimeoutMS=30000,
+                    connectTimeoutMS=30000,
+                    socketTimeoutMS=30000,
+                )
+                print("✅ Successfully connected to MongoDB (method 3)")
+                
     except Exception as e:
-        print(f"❌ Error connecting to MongoDB: {e}")
+        print(f"❌ All connection methods failed: {e}")
         # Don't raise the exception to prevent deployment failure
 
 
