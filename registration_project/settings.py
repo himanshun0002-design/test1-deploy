@@ -16,14 +16,7 @@ from . import mongodb
 
 from pathlib import Path
 import os
-# registration_project/mongodb.py
-from mongoengine import connect
-
-connect(
-    db="registration_project",  # 👈 change to your DB name, e.g. "test" or "zoom"
-    host="mongodb+srv://newinfluencer99_db_user:mzKmvdzqv0Mf0EgV@cluster0.mnjvgvb.mongodb.net/",
-    alias="default"
-)
+# MongoDB Configuration - connection will be established when needed
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,12 +81,7 @@ WSGI_APPLICATION = 'registration_project.wsgi.application'
 # MongoDB Configuration
 MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://newinfluencer99_db_user:mzKmvdzqv0Mf0EgV@cluster0.mnjvgvb.mongodb.net/')
 
-# Initialize MongoDB connection
-try:
-    from .mongodb import connect_to_mongodb
-    connect_to_mongodb()
-except Exception as e:
-    print(f"Warning: Could not connect to MongoDB: {e}")
+# MongoDB connection will be established when needed, not at import time
 
 # Keep SQLite for Django's built-in functionality (auth, admin, sessions)
 DATABASES = {
