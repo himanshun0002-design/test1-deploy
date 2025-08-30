@@ -10,8 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+
+from . import mongodb
+
+
 from pathlib import Path
 import os
+# registration_project/mongodb.py
+from mongoengine import connect
+
+connect(
+    db="registration_project",  # 👈 change to your DB name, e.g. "test" or "zoom"
+    host="mongodb+srv://newinfluencer99_db_user:mzKmvdzqv0Mf0EgV@cluster0.mnjvgvb.mongodb.net/",
+    alias="default"
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

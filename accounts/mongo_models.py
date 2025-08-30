@@ -2,8 +2,9 @@
 MongoDB models using mongoengine
 These models will be stored in MongoDB while Django ORM models remain in SQLite/PostgreSQL
 """
-from mongoengine import Document, StringField, DateTimeField, IntField, ListField, ReferenceField
+from mongoengine import Document, StringField, DateTimeField, IntField, ListField
 from datetime import datetime
+
 
 class UserProfile(Document):
     """User profile stored in MongoDB"""
@@ -16,12 +17,14 @@ class UserProfile(Document):
 
     meta = {
         'collection': 'user_profiles',
-        'indexes': ['user_id']
+        'indexes': ['user_id'],
+        'db_alias': 'default'   # 👈 ensures it uses the default MongoDB connection
     }
 
     def save(self, *args, **kwargs):
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
+
 
 class Post(Document):
     """Blog post stored in MongoDB"""
@@ -40,12 +43,14 @@ class Post(Document):
             'author_id',
             '-created_at',
             'tags'
-        ]
+        ],
+        'db_alias': 'default'   # 👈 ensures it uses the default MongoDB connection
     }
 
     def save(self, *args, **kwargs):
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
+
 
 class Comment(Document):
     """Comment on a post stored in MongoDB"""
@@ -60,5 +65,6 @@ class Comment(Document):
             'post_id',
             'author_id',
             '-created_at'
-        ]
+        ],
+        'db_alias': 'default'   # 👈 ensures it uses the default MongoDB connection
     }
