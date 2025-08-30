@@ -1,0 +1,331 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Delete Post - Blog Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --dark-gray: #111111;
+            --gray: #1a1a1a;
+            --lighter-gray: #2a2a2a;
+            --ink: #f5f5f5;
+            --muted: #cccccc;
+            --accent: #e24e89;
+            --accent-2: #ff86b3;
+            --white: #fff;
+            --error: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+            color: var(--ink);
+            background: var(--black);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            color: var(--ink);
+        }
+
+        .brand {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--gray);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .brand .name {
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .menu a {
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: .9;
+        }
+
+        .menu a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .card {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: var(--dark-gray);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: var(--error);
+            font-family: Pacifico, cursive;
+            font-size: 36px;
+        }
+
+        .card-header p {
+            margin: 10px 0 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .warning-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .warning-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .warning-title {
+            font-weight: 700;
+            color: var(--error);
+            margin-bottom: 10px;
+        }
+
+        .warning-text {
+            color: var(--ink);
+            line-height: 1.6;
+        }
+
+        .post-preview {
+            background: var(--dark-gray);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .post-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-2);
+            margin-bottom: 10px;
+        }
+
+        .post-content {
+            color: var(--ink);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--lighter-gray);
+            color: var(--ink);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+                 @media (max-width: 768px) {
+             body {
+                 padding: 10px;
+             }
+             
+             .nav {
+                 flex-direction: column;
+                 gap: 15px;
+                 padding: 15px 20px;
+             }
+             
+             .menu {
+                 flex-wrap: wrap;
+                 justify-content: center;
+                 gap: 15px;
+             }
+             
+             .card-header {
+                 padding: 20px;
+             }
+             
+             .card-header h2 {
+                 font-size: 28px;
+             }
+             
+             .card-body {
+                 padding: 20px;
+             }
+             
+             .actions {
+                 flex-direction: column;
+             }
+             
+             .warning-box {
+                 padding: 15px;
+             }
+             
+             .post-preview {
+                 padding: 15px;
+             }
+         }
+         
+         @media (max-width: 480px) {
+             .card-header {
+                 padding: 15px;
+             }
+             
+             .card-header h2 {
+                 font-size: 24px;
+             }
+             
+             .card-body {
+                 padding: 15px;
+             }
+             
+             .warning-box {
+                 padding: 12px;
+             }
+             
+             .post-preview {
+                 padding: 12px;
+             }
+             
+             .btn {
+                 padding: 12px 16px;
+                 font-size: 13px;
+             }
+         }
+    </style>
+</head>
+<body>
+    <!-- Top Nav -->
+    <header class="nav">
+        <div class="brand">
+            <div class="logo">📝</div>
+            <div class="name">Blog Platform</div>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'accounts:home' %}">Home</a>
+            <a href="{% url 'accounts:profile' %}">Profile</a>
+            <a href="{% url 'accounts:create_post' %}">Create Post</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Delete Post</h2>
+                <p>Are you sure you want to delete this post?</p>
+            </div>
+            <div class="card-body">
+                <div class="warning-box">
+                    <div class="warning-icon">⚠️</div>
+                    <div class="warning-title">This action cannot be undone</div>
+                    <div class="warning-text">
+                        Once you delete this post, it will be permanently removed from the platform. 
+                        All comments and likes associated with this post will also be deleted.
+                    </div>
+                </div>
+
+                <div class="post-preview">
+                    <div class="post-title">{{ post.title }}</div>
+                    <div class="post-content">{{ post.content|truncatewords:50 }}</div>
+                    <div class="post-meta">
+                        Created on {{ post.created_at|date:"M d, Y" }} at {{ post.created_at|date:"g:i A" }}
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="actions">
+                        <button type="submit" class="btn btn-danger">Delete Post</button>
+                        <a href="{% url 'accounts:post_detail' post.id %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

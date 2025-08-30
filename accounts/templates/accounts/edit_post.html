@@ -1,0 +1,354 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Post - Blog Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --dark-gray: #111111;
+            --gray: #1a1a1a;
+            --lighter-gray: #2a2a2a;
+            --ink: #f5f5f5;
+            --muted: #cccccc;
+            --accent: #e24e89;
+            --accent-2: #ff86b3;
+            --white: #fff;
+            --error: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+            color: var(--ink);
+            background: var(--black);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            color: var(--ink);
+        }
+
+        .brand {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--gray);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .brand .name {
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .menu a {
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: .9;
+        }
+
+        .menu a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .card {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: var(--dark-gray);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: var(--accent-2);
+            font-family: Pacifico, cursive;
+            font-size: 36px;
+        }
+
+        .card-header p {
+            margin: 10px 0 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--lighter-gray);
+            border-radius: 12px;
+            background: var(--dark-gray);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(226, 78, 137, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--lighter-gray);
+            color: var(--ink);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .message.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: var(--error);
+        }
+
+        .message.success {
+            background: rgba(81, 207, 102, 0.1);
+            border: 1px solid rgba(81, 207, 102, 0.3);
+            color: var(--success);
+        }
+
+                 @media (max-width: 768px) {
+             body {
+                 padding: 10px;
+             }
+             
+             .nav {
+                 flex-direction: column;
+                 gap: 15px;
+                 padding: 15px 20px;
+             }
+             
+             .menu {
+                 flex-wrap: wrap;
+                 justify-content: center;
+                 gap: 15px;
+             }
+             
+             .card-header {
+                 padding: 20px;
+             }
+             
+             .card-header h2 {
+                 font-size: 28px;
+             }
+             
+             .card-body {
+                 padding: 20px;
+             }
+             
+             .actions {
+                 flex-direction: column;
+             }
+             
+             textarea.form-control {
+                 min-height: 150px;
+             }
+         }
+         
+         @media (max-width: 480px) {
+             .card-header {
+                 padding: 15px;
+             }
+             
+             .card-header h2 {
+                 font-size: 24px;
+             }
+             
+             .card-body {
+                 padding: 15px;
+             }
+             
+             .form-control {
+                 padding: 12px;
+             }
+             
+             textarea.form-control {
+                 min-height: 120px;
+             }
+             
+             .btn {
+                 padding: 12px 16px;
+                 font-size: 13px;
+             }
+         }
+    </style>
+</head>
+<body>
+    <!-- Top Nav -->
+    <header class="nav">
+        <div class="brand">
+            <div class="logo">📝</div>
+            <div class="name">Blog Platform</div>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'accounts:home' %}">Home</a>
+            <a href="{% url 'accounts:profile' %}">Profile</a>
+            <a href="{% url 'accounts:create_post' %}">Create Post</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Edit Post</h2>
+                <p>Update your post content</p>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="12" required>{{ post.content }}</textarea>
+                        <div class="form-help">Write your post content here. You can use basic formatting.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags" class="form-label">Tags</label>
+                        <input type="text" class="form-control" id="tags" name="tags" 
+                               value="{% if post.tags %}{{ post.tags|join:', ' }}{% endif %}" 
+                               placeholder="e.g., technology, programming, django">
+                        <div class="form-help">Separate tags with commas</div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary">Update Post</button>
+                        <a href="{% url 'accounts:post_detail' post.id %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

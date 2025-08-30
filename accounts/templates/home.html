@@ -177,21 +177,233 @@ code.badge {
   color: var(--ink);
 }
 
+/* Blog Posts Styles */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 20px;
+  }
+  
+  .menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .left h1 {
+    font-size: 48px;
+  }
+  
+  .hero-img {
+    min-height: 200px;
+  }
+  
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .post-card {
+    padding: 15px;
+  }
+  
+  .post-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .tabs {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .tab {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+  
+  .social {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+  
+  .left h1 {
+    font-size: 36px;
+  }
+  
+  .card {
+    padding: 0 10px;
+  }
+  
+  .content {
+    padding: 15px;
+  }
+  
+  .post-card {
+    padding: 12px;
+  }
+  
+  .post-header h3 {
+    font-size: 16px;
+  }
+  
+  .post-meta {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+.post-card {
+  background: var(--dark-gray);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--lighter-gray);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,.3);
+}
+
+.post-header h3 {
+  margin: 0 0 10px 0;
+  color: var(--accent-2);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.post-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 15px;
+}
+
+.post-content p {
+  color: var(--ink);
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: var(--accent);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.likes {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  margin: 0 0 10px 0;
+  color: var(--ink);
+  font-size: 24px;
+}
+
+.empty-state p {
+  margin: 0 0 30px 0;
+  font-size: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(226, 78, 137, 0.3);
+}
+
     </style>
   </head>
   <body>
     <!-- Top Nav -->
     <header class="nav">
       <div class="brand">
-        <div class="logo">🎵</div>
-        <div class="name">Shop Convert</div>
+        <div class="logo">📝</div>
+        <div class="name">Blog Platform</div>
       </div>
       <nav class="menu">
-        <a href="#about">About</a>
-        <a href="#convert">Converter</a>
-        <a href="#tips">Things to consider</a>
-        <a href="#testimonials">Testimonials</a>
-        <a href="#contact">Contact</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:profile' %}">Profile</a>
+          <a href="{% url 'accounts:create_post' %}">Create Post</a>
+          <a href="{% url 'accounts:logout' %}">Logout</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">Login</a>
+          <a href="{% url 'accounts:register' %}">Sign Up</a>
+        {% endif %}
         <span class="social">
           <a href="#" aria-label="facebook">f</a>
           <a href="#" aria-label="twitter">t</a>
@@ -203,165 +415,95 @@ code.badge {
     <!-- Hero -->
     <section class="hero">
       <div class="left">
-        <h1>convert!</h1>
+        <h1>Share Your Story</h1>
         <p>
-          I'm fast, friendly, and runs in your browser. Turn <strong>MP4</strong> (and many other videos) into crystal clear <strong>MP3</strong> without uploading your files anywhere.
+          Welcome to our blog platform! Share your thoughts, ideas, and experiences with the world. Create beautiful posts and connect with other writers.
         </p>
-        <button class="cta" id="chooseBtn">Choose a file ↗</button>
-        <small class="tiny">Powered by <code class="badge">ffmpeg.wasm</code>. Your media never leaves your device.</small>
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:create_post' %}" class="cta">Create Post ↗</a>
+        {% else %}
+          <a href="{% url 'accounts:register' %}" class="cta">Get Started ↗</a>
+        {% endif %}
+        <small class="tiny">Join our community of writers and readers. Start sharing your stories today.</small>
       </div>
       <div class="hero-img" aria-hidden="true">
-        <!-- Replace the src below with your own image if you like -->
-        {% comment %} <img src="https://images.unsplash.com/photo-1544207240-3a8d2a13b236?q=80&w=1400&auto=format&fit=crop" alt="Playful hero image" /> {% endcomment %}
-        <img src="{% static 'accounts/images/pexels-garrettmorrow-1649771.jpg' %}" alt="Hero image" />
+        <img src="{% static 'accounts/images/pexels-garrettmorrow-1649771.jpg' %}" alt="Blog platform hero image" />
       </div>
     </section>
 
-    <!-- Converter Card -->
-    <main id="convert" class="card">
+    <!-- Blog Posts Section -->
+    <main class="card">
       <div class="card-inner">
         <div class="tabs">
-          <button class="tab" title="Common input">MP4</button>
-          <button class="tab" title="Also supported">MOV/AVI/MKV</button>
-          <button class="tab" title="Output format">MP3</button>
+          <button class="tab" title="Latest posts">Latest Posts</button>
+          <button class="tab" title="Popular">Popular</button>
+          <button class="tab" title="Categories">Categories</button>
         </div>
         <div class="content">
-          <div id="drop" class="dropzone">
-            <div>
-              <strong>Drop a video</strong> here or
-              <button class="ghost" id="browseBtn">Browse</button>
+          <!-- Search Bar -->
+          <form method="get" action="{% url 'accounts:home' %}" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px;">
+              <input type="text" name="q" value="{{ search_query }}" 
+                     placeholder="Search posts..." 
+                     style="flex: 1; padding: 12px; border: 2px solid var(--lighter-gray); border-radius: 12px; background: var(--dark-gray); color: var(--ink); font-family: inherit;">
+              <button type="submit" class="btn primary">Search</button>
             </div>
-            <div>
-              We extract audio and save as <strong>.mp3</strong>.
+          </form>
+          {% if posts %}
+            <div class="posts-grid">
+              {% for post in posts %}
+              <div class="post-card">
+                <div class="post-header">
+                  <h3><a href="{% url 'accounts:post_detail' post.id %}" style="color: var(--accent-2); text-decoration: none;">{{ post.title }}</a></h3>
+                  <div class="post-meta">
+                    <span class="author">By User #{{ post.author_id }}</span>
+                    <span class="date">{{ post.created_at|date:"M d, Y" }}</span>
+                  </div>
+                </div>
+                <div class="post-content">
+                  <p>{{ post.content|truncatewords:30 }}</p>
+                </div>
+                <div class="post-footer">
+                  {% if post.tags %}
+                  <div class="tags">
+                    {% for tag in post.tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                  <div class="likes">
+                    <span>❤️ {{ post.likes_count }}</span>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
             </div>
-            <input id="fileInput" class="hidden" type="file" accept="video/*" />
-            <div class="progress hidden" id="progress">
-              <span></span>
+          {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">📝</div>
+              <h3>No posts yet</h3>
+              <p>Be the first to share your story!</p>
+              {% if user.is_authenticated %}
+                <a href="{% url 'accounts:create_post' %}" class="btn primary">Create Your First Post</a>
+              {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn primary">Join and Start Writing</a>
+              {% endif %}
             </div>
-            <div class="actions hidden" id="actions">
-              <button class="primary" id="downloadBtn">Download MP3</button>
-              <button class="ghost" id="againBtn">Convert another</button>
-            </div>
-            <div id="status" class="tiny" style="color:#374151"></div>
-          </div>
+          {% endif %}
         </div>
       </div>
     </main>
 
     <footer id="about">
       <p>
-        <strong>Why this?</strong> Sometimes you just want the audio. This page converts locally in your browser for privacy and speed. Tip: keep your tab open during conversion.
+        <strong>About Blog Platform</strong> Share your thoughts, ideas, and experiences with our community. Connect with other writers and readers from around the world.
       </p>
     </footer>
 
-    <!-- ffmpeg.wasm -->
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+    <!-- Blog Platform Scripts -->
     <script>
-      const { createFFmpeg, fetchFile } = FFmpeg
-      const ffmpeg = createFFmpeg({ log: true })
-      
-      const fileInput = document.getElementById('fileInput')
-      const browseBtn = document.getElementById('browseBtn')
-      const chooseBtn = document.getElementById('chooseBtn')
-      const dropzone = document.getElementById('drop')
-      const progressEl = document.getElementById('progress')
-      const bar = progressEl.querySelector('span')
-      const statusEl = document.getElementById('status')
-      const actionsEl = document.getElementById('actions')
-      const downloadBtn = document.getElementById('downloadBtn')
-      const againBtn = document.getElementById('againBtn')
-      
-      let outputBlob = null
-      
-      function show(el) {
-        el.classList.remove('hidden')
-      }
-      function hide(el) {
-        el.classList.add('hidden')
-      }
-      function setStatus(msg) {
-        statusEl.textContent = msg || ''
-      }
-      function setProgress(p) {
-        bar.style.width = Math.max(0, Math.min(100, p)) + '%'
-      }
-      
-      // UI wiring
-      browseBtn.addEventListener('click', () => fileInput.click())
-      chooseBtn.addEventListener('click', () => fileInput.click())
-      fileInput.addEventListener('change', (e) => handleFiles(e.target.files))
-      
-      // Drag & drop
-      ;['dragenter', 'dragover'].forEach((ev) =>
-        dropzone.addEventListener(ev, (e) => {
-          e.preventDefault()
-          dropzone.classList.add('drag')
-        })
-      )
-      ;['dragleave', 'drop'].forEach((ev) =>
-        dropzone.addEventListener(ev, (e) => {
-          e.preventDefault()
-          dropzone.classList.remove('drag')
-        })
-      )
-      dropzone.addEventListener('drop', (e) => {
-        e.preventDefault()
-        if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
-      })
-      
-      againBtn.addEventListener('click', () => {
-        outputBlob = null
-        setStatus('')
-        setProgress(0)
-        hide(actionsEl)
-        hide(progressEl)
-        fileInput.value = ''
-      })
-      
-      downloadBtn.addEventListener('click', () => {
-        if (!outputBlob) return
-        const a = document.createElement('a')
-        a.href = URL.createObjectURL(outputBlob)
-        a.download = 'audio.mp3'
-        a.click()
-        URL.revokeObjectURL(a.href)
-      })
-      
-      async function ensureFFmpeg() {
-        if (!ffmpeg.isLoaded()) {
-          setStatus('Loading converter… (first time may take a moment)')
-          await ffmpeg.load()
-        }
-      }
-      
-      async function handleFiles(files) {
-        const file = files[0]
-        if (!file) return
-        hide(actionsEl)
-        show(progressEl)
-        setProgress(0)
-        setStatus(`Preparing: ${file.name}`)
-        try {
-          await ensureFFmpeg()
-          ffmpeg.setProgress(({ ratio }) => {
-            if (Number.isFinite(ratio)) setProgress(Math.round(ratio * 100))
-          })
-          const inputName = 'input.' + (file.name.split('.').pop() || 'mp4')
-          const outName = 'output.mp3'
-          ffmpeg.FS('writeFile', inputName, await fetchFile(file))
-          setStatus('Converting to MP3…')
-          await ffmpeg.run('-i', inputName, '-vn', '-acodec', 'libmp3lame', '-b:a', '192k', outName)
-          const data = ffmpeg.FS('readFile', outName)
-          outputBlob = new Blob([data.buffer], { type: 'audio/mpeg' })
-          show(actionsEl)
-          setStatus('Done! Click Download MP3.')
-          setProgress(100)
-        } catch (err) {
-          console.error(err)
-          setStatus('Conversion failed. Please try another file.')
-          hide(progressEl)
-        }
-      }
+      // Add any interactive features for the blog platform here
+      console.log('Blog Platform loaded successfully!');
     </script>
   </body>
 </html>

@@ -1,0 +1,286 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Post</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --dark-gray: #111111;
+            --gray: #1a1a1a;
+            --lighter-gray: #2a2a2a;
+            --ink: #f5f5f5;
+            --muted: #cccccc;
+            --accent: #e24e89;
+            --accent-2: #ff86b3;
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+            color: var(--ink);
+            background: var(--black);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .card-header {
+            background: var(--dark-gray);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            color: var(--accent-2);
+            font-family: Pacifico, cursive;
+            font-size: 32px;
+        }
+
+        .card-body {
+            padding: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--lighter-gray);
+            border-radius: 12px;
+            background: var(--dark-gray);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 20px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: var(--lighter-gray);
+            color: var(--ink);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .nav {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            color: var(--ink);
+        }
+
+        .brand {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--gray);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .brand .name {
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .menu a {
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: .9;
+        }
+
+        .menu a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+            
+            .menu {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .card-header {
+                padding: 20px;
+            }
+            
+            .card-header h3 {
+                font-size: 24px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            textarea.form-control {
+                min-height: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card-header {
+                padding: 15px;
+            }
+            
+            .card-header h3 {
+                font-size: 20px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .form-control {
+                padding: 12px;
+            }
+            
+            textarea.form-control {
+                min-height: 120px;
+            }
+            
+            .btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Nav -->
+    <header class="nav">
+        <div class="brand">
+            <div class="logo">📝</div>
+            <div class="name">Blog Platform</div>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'accounts:home' %}">Home</a>
+            <a href="{% url 'accounts:profile' %}">Profile</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h3>Create New Post</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="8" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags" class="form-label">Tags (comma-separated)</label>
+                        <input type="text" class="form-control" id="tags" name="tags" placeholder="e.g., technology, programming, django">
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary">Create Post</button>
+                        <a href="{% url 'accounts:home' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

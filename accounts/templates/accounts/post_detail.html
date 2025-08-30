@@ -1,0 +1,612 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ post.title }} - Blog Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --dark-gray: #111111;
+            --gray: #1a1a1a;
+            --lighter-gray: #2a2a2a;
+            --ink: #f5f5f5;
+            --muted: #cccccc;
+            --accent: #e24e89;
+            --accent-2: #ff86b3;
+            --white: #fff;
+            --error: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+            color: var(--ink);
+            background: var(--black);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            color: var(--ink);
+        }
+
+        .brand {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--gray);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .brand .name {
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .menu a {
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: .9;
+        }
+
+        .menu a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .post-card {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .post-header {
+            background: var(--dark-gray);
+            padding: 30px;
+            border-bottom: 1px solid var(--lighter-gray);
+        }
+
+        .post-title {
+            margin: 0 0 15px 0;
+            color: var(--accent-2);
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--muted);
+            align-items: center;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .post-content {
+            padding: 30px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .post-content p {
+            margin: 0 0 20px 0;
+            color: var(--ink);
+        }
+
+        .post-footer {
+            padding: 20px 30px;
+            background: var(--dark-gray);
+            border-top: 1px solid var(--lighter-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--accent);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--lighter-gray);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: var(--ink);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .like-btn:hover {
+            background: var(--gray);
+        }
+
+        .like-btn.liked {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .like-btn.liked:hover {
+            background: var(--accent-2);
+        }
+
+        .edit-delete {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: var(--lighter-gray);
+            color: var(--ink);
+        }
+
+        .btn-edit:hover {
+            background: var(--gray);
+        }
+
+        .btn-delete {
+            background: var(--error);
+            color: var(--white);
+        }
+
+        .btn-delete:hover {
+            background: #ff5252;
+        }
+
+        .comments-section {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            background: var(--dark-gray);
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--lighter-gray);
+        }
+
+        .section-title {
+            margin: 0;
+            color: var(--accent-2);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .comment-form {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--lighter-gray);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--lighter-gray);
+            border-radius: 12px;
+            background: var(--dark-gray);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-2);
+        }
+
+        .comments-list {
+            padding: 20px 30px;
+        }
+
+        .comment {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--lighter-gray);
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--accent-2);
+        }
+
+        .comment-date {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .comment-content {
+            color: var(--ink);
+            line-height: 1.6;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .message.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: var(--error);
+        }
+
+        .message.success {
+            background: rgba(81, 207, 102, 0.1);
+            border: 1px solid rgba(81, 207, 102, 0.3);
+            color: var(--success);
+        }
+
+                 @media (max-width: 768px) {
+             body {
+                 padding: 10px;
+             }
+             
+             .nav {
+                 flex-direction: column;
+                 gap: 15px;
+                 padding: 15px 20px;
+             }
+             
+             .menu {
+                 flex-wrap: wrap;
+                 justify-content: center;
+                 gap: 15px;
+             }
+             
+             .post-title {
+                 font-size: 24px;
+             }
+             
+             .post-meta {
+                 flex-direction: column;
+                 gap: 10px;
+             }
+             
+             .post-footer {
+                 flex-direction: column;
+                 gap: 15px;
+                 align-items: flex-start;
+             }
+             
+             .post-actions {
+                 width: 100%;
+                 justify-content: space-between;
+             }
+             
+             .post-header {
+                 padding: 20px;
+             }
+             
+             .post-content {
+                 padding: 20px;
+             }
+             
+             .post-footer {
+                 padding: 15px 20px;
+             }
+             
+             .comments-section {
+                 margin-bottom: 20px;
+             }
+             
+             .comment-form {
+                 padding: 15px 20px;
+             }
+             
+             .comments-list {
+                 padding: 15px 20px;
+             }
+         }
+         
+         @media (max-width: 480px) {
+             .post-title {
+                 font-size: 20px;
+             }
+             
+             .post-header {
+                 padding: 15px;
+             }
+             
+             .post-content {
+                 padding: 15px;
+             }
+             
+             .post-footer {
+                 padding: 12px 15px;
+             }
+             
+             .comment-form {
+                 padding: 12px 15px;
+             }
+             
+             .comments-list {
+                 padding: 12px 15px;
+             }
+             
+             .post-actions {
+                 flex-direction: column;
+                 gap: 10px;
+             }
+             
+             .edit-delete {
+                 width: 100%;
+                 justify-content: space-between;
+             }
+         }
+    </style>
+</head>
+<body>
+    <!-- Top Nav -->
+    <header class="nav">
+        <div class="brand">
+            <div class="logo">📝</div>
+            <div class="name">Blog Platform</div>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'accounts:home' %}">Home</a>
+            <a href="{% url 'accounts:profile' %}">Profile</a>
+            <a href="{% url 'accounts:create_post' %}">Create Post</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Post Card -->
+        <div class="post-card">
+            <div class="post-header">
+                <h1 class="post-title">{{ post.title }}</h1>
+                <div class="post-meta">
+                    <div class="post-author">
+                        <div class="author-avatar">U</div>
+                        <span>By User #{{ post.author_id }}</span>
+                    </div>
+                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                    <span>{{ post.created_at|date:"g:i A" }}</span>
+                </div>
+            </div>
+            
+            <div class="post-content">
+                {{ post.content|linebreaks }}
+            </div>
+            
+            <div class="post-footer">
+                {% if post.tags %}
+                <div class="tags">
+                    {% for tag in post.tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="post-actions">
+                    <button class="like-btn" data-post-id="{{ post.id }}" onclick="toggleLike(this)">
+                        <span class="like-icon">❤️</span>
+                        <span class="like-count">{{ post.likes_count }}</span>
+                    </button>
+                    
+                    {% if user.is_authenticated and user.id|stringformat:"s" == post.author_id %}
+                    <div class="edit-delete">
+                        <a href="{% url 'accounts:edit_post' post.id %}" class="btn btn-edit">Edit</a>
+                        <a href="{% url 'accounts:delete_post' post.id %}" class="btn btn-delete">Delete</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <div class="section-header">
+                <h2 class="section-title">Comments</h2>
+            </div>
+            
+            {% if user.is_authenticated %}
+            <div class="comment-form">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="content" class="form-label">Add a comment</label>
+                        <textarea class="form-control" id="content" name="content" placeholder="Share your thoughts..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                </form>
+            </div>
+            {% endif %}
+            
+            <div class="comments-list">
+                {% if comments %}
+                    {% for comment in comments %}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-author">User #{{ comment.author_id }}</span>
+                            <span class="comment-date">{{ comment.created_at|date:"M d, Y g:i A" }}</span>
+                        </div>
+                        <div class="comment-content">
+                            {{ comment.content|linebreaks }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); text-align: center; padding: 20px;">No comments yet. Be the first to comment!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleLike(button) {
+            const postId = button.dataset.postId;
+            const isLiked = button.classList.contains('liked');
+            const url = isLiked ? `/post/${postId}/unlike/` : `/post/${postId}/like/`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const likeCount = button.querySelector('.like-count');
+                    const currentCount = parseInt(likeCount.textContent);
+                    
+                    if (data.action === 'liked') {
+                        button.classList.add('liked');
+                        likeCount.textContent = currentCount + 1;
+                    } else {
+                        button.classList.remove('liked');
+                        likeCount.textContent = currentCount - 1;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

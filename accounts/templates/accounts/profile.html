@@ -1,0 +1,538 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile - Blog Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Pacifico&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --dark-gray: #111111;
+            --gray: #1a1a1a;
+            --lighter-gray: #2a2a2a;
+            --ink: #f5f5f5;
+            --muted: #cccccc;
+            --accent: #e24e89;
+            --accent-2: #ff86b3;
+            --white: #fff;
+            --error: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+            color: var(--ink);
+            background: var(--black);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            color: var(--ink);
+        }
+
+        .brand {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--gray);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .brand .name {
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+        }
+
+        .menu a {
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: .9;
+        }
+
+        .menu a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .profile-header {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .profile-banner {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            height: 120px;
+            position: relative;
+        }
+
+        .profile-avatar {
+            position: absolute;
+            bottom: -40px;
+            left: 40px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--dark-gray);
+            border: 4px solid var(--gray);
+            display: grid;
+            place-items: center;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .profile-info {
+            padding: 60px 40px 40px;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--accent-2);
+        }
+
+        .profile-username {
+            color: var(--muted);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-bio {
+            color: var(--ink);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent-2);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(226, 78, 137, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--lighter-gray);
+            color: var(--ink);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+        }
+
+        .content-section {
+            background: var(--gray);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.8);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            background: var(--dark-gray);
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--lighter-gray);
+        }
+
+        .section-title {
+            margin: 0;
+            color: var(--accent-2);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .section-content {
+            padding: 30px;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .post-card {
+            background: var(--dark-gray);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--lighter-gray);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.3);
+        }
+
+        .post-header h3 {
+            margin: 0 0 10px 0;
+            color: var(--accent-2);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+
+        .post-content p {
+            color: var(--ink);
+            line-height: 1.6;
+            margin: 0 0 15px 0;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--accent);
+            color: var(--white);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .likes {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            color: var(--ink);
+            font-size: 24px;
+        }
+
+        .empty-state p {
+            margin: 0 0 30px 0;
+            font-size: 16px;
+        }
+
+        .interests {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .interest {
+            background: var(--lighter-gray);
+            color: var(--ink);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+                 @media (max-width: 768px) {
+             body {
+                 padding: 10px;
+             }
+             
+             .nav {
+                 flex-direction: column;
+                 gap: 15px;
+                 padding: 15px 20px;
+             }
+             
+             .menu {
+                 flex-wrap: wrap;
+                 justify-content: center;
+                 gap: 15px;
+             }
+             
+             .profile-info {
+                 padding: 40px 20px 20px;
+             }
+             
+             .profile-avatar {
+                 left: 20px;
+                 width: 60px;
+                 height: 60px;
+                 font-size: 24px;
+             }
+             
+             .profile-name {
+                 font-size: 24px;
+             }
+             
+             .profile-stats {
+                 flex-direction: column;
+                 gap: 15px;
+             }
+             
+             .profile-actions {
+                 flex-direction: column;
+             }
+             
+             .posts-grid {
+                 grid-template-columns: 1fr;
+             }
+             
+             .post-card {
+                 padding: 15px;
+             }
+             
+             .post-footer {
+                 flex-direction: column;
+                 gap: 10px;
+                 align-items: flex-start;
+             }
+         }
+         
+         @media (max-width: 480px) {
+             .profile-info {
+                 padding: 30px 15px 15px;
+             }
+             
+             .profile-avatar {
+                 left: 15px;
+                 width: 50px;
+                 height: 50px;
+                 font-size: 20px;
+             }
+             
+             .profile-name {
+                 font-size: 20px;
+             }
+             
+             .profile-banner {
+                 height: 80px;
+             }
+             
+             .post-card {
+                 padding: 12px;
+             }
+             
+             .post-header h3 {
+                 font-size: 16px;
+             }
+             
+             .post-meta {
+                 flex-direction: column;
+                 gap: 5px;
+             }
+         }
+    </style>
+</head>
+<body>
+    <!-- Top Nav -->
+    <header class="nav">
+        <div class="brand">
+            <div class="logo">📝</div>
+            <div class="name">Blog Platform</div>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'accounts:home' %}">Home</a>
+            <a href="{% url 'accounts:create_post' %}">Create Post</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-banner"></div>
+            <div class="profile-avatar">
+                {{ user.username|first|upper }}
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ user.get_full_name|default:user.username }}</h1>
+                <p class="profile-username">@{{ user.username }}</p>
+                
+                {% if user_profile %}
+                    {% if user_profile.bio %}
+                        <p class="profile-bio">{{ user_profile.bio }}</p>
+                    {% endif %}
+                    
+                    {% if user_profile.interests %}
+                        <div class="interests">
+                            {% for interest in user_profile.interests %}
+                                <span class="interest">{{ interest }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="profile-bio">Welcome to your profile! You can add a bio and interests to personalize your profile.</p>
+                {% endif %}
+
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-number">{{ user_posts.count }}</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Following</div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <a href="{% url 'accounts:create_post' %}" class="btn btn-primary">Create New Post</a>
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Posts Section -->
+        <div class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">My Posts</h2>
+            </div>
+            <div class="section-content">
+                {% if user_posts %}
+                    <div class="posts-grid">
+                        {% for post in user_posts %}
+                        <div class="post-card">
+                            <div class="post-header">
+                                <h3>{{ post.title }}</h3>
+                                <div class="post-meta">
+                                    <span class="date">{{ post.created_at|date:"M d, Y" }}</span>
+                                    <span class="time">{{ post.created_at|date:"g:i A" }}</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <p>{{ post.content|truncatewords:30 }}</p>
+                            </div>
+                            <div class="post-footer">
+                                {% if post.tags %}
+                                <div class="tags">
+                                    {% for tag in post.tags %}
+                                    <span class="tag">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="likes">
+                                    <span>❤️ {{ post.likes_count }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>No posts yet</h3>
+                        <p>Start sharing your thoughts with the world!</p>
+                        <a href="{% url 'accounts:create_post' %}" class="btn btn-primary">Create Your First Post</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

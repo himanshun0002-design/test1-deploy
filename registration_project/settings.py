@@ -73,6 +73,17 @@ WSGI_APPLICATION = 'registration_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# MongoDB Configuration
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb+srv://newinfluencer99_db_user:mzKmvdzqv0Mf0EgV@cluster0.mnjvgvb.mongodb.net/')
+
+# Initialize MongoDB connection
+try:
+    from .mongodb import connect_to_mongodb
+    connect_to_mongodb()
+except Exception as e:
+    print(f"Warning: Could not connect to MongoDB: {e}")
+
+# Keep SQLite for Django's built-in functionality (auth, admin, sessions)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -80,7 +91,7 @@ DATABASES = {
     }
 }
 
-# Update database configuration from $DATABASE_URL if available
+# Update database configuration from $DATABASE_URL if available (for production)
 if os.environ.get('DATABASE_URL'):
     import dj_database_url
     db_from_env = dj_database_url.config(conn_max_age=600)
